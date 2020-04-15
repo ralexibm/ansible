@@ -23,5 +23,23 @@
 
   vars:
         pre_update_script: /var/log/checklist/RHEL_pre_update_without_reboot.sh
-        post_update_script: /var/log/checklist/RHEL_post_update.sh
 
+  pre_tasks:
+
+          ##########################################################################
+          ## pre_update script
+          ##########################################################################
+        
+          - name: Create the directory /var/log/checklist if it does not exist
+            file:
+              path: /var/log/checklist
+              state: directory
+              mode: '0775'
+
+          - name: Copying pre-update script to server
+            copy: src=RHEL_pre_update_without_reboot.sh dest=/var/log/checklist/RHEL_pre_update.sh owner=root group=root mode=775
+
+          - name: Checking if pre update script exist
+            stat:
+              path: '{{ pre_update_script }}'
+            register: pre_update_file
