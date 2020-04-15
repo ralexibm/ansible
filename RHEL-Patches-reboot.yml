@@ -1,0 +1,27 @@
+#####################################################################################
+## [RHEL_Patches_reboot.yml]
+## --
+## Authors        : Renato Alexandre da Rocha (ralex@br.ibm.com) @ralex 
+## Squad          : GI_SSI_OM_S1 Squad
+## 
+#####################################################################################
+
+#####################################################################################
+## Script Purpose : Playbook to perform 'yum update' on selected hosts.
+##                  This playbook will also reboot hosts if kernel is updated.
+##
+## Supported OS:  RHEL
+#####################################################################################
+
+---
+- name: Performing yum update on host(s) excluding the Kernel and GLIBC
+  hosts: LINUX_TEST
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  any_errors_fatal: false
+
+  vars:
+        pre_update_script: /var/log/checklist/RHEL_pre_update_without_reboot.sh
+        post_update_script: /var/log/checklist/RHEL_post_update.sh
+
