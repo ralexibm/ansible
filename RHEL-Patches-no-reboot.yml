@@ -50,7 +50,7 @@
             when: pre_update_file.stat.exists == true
             ignore_errors: no
             
- tasks:
+   tasks:
 
           ###########################################################################
           ## Check if the server has updates available to be installed
