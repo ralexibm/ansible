@@ -15,7 +15,7 @@
 
 ---
 - name: Performing yum update on host(s) excluding the Kernel and GLIBC
-  hosts: LINUX_TEST
+  hosts: all
   remote_user: ansible
   become: yes
   become_method: sudo
