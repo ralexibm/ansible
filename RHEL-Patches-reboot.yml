@@ -23,6 +23,7 @@
 
   vars:
         pre_update_script: /var/log/checklist/RHEL_pre_update_without_reboot.sh
+        post_update_script: /var/log/checklist/RHEL_post_update.sh
 
   pre_tasks:
 
@@ -49,39 +50,7 @@
             when: pre_update_file.stat.exists == true
             ignore_errors: no
             
-  tasks:
-
-          ###########################################################################
-          ## Check if the server has updates available to be installed
-          ###########################################################################
-          
-          - name: Checking patches available for updates
-            shell: yum list updates | awk 'f;/Updated Packages/{f=1;}' | awk '{ print $1 }' | grep -v kernel | grep -v glibc
-            changed_when: updates.stdout_lines | length > 0
-            args:
-              warn: false
-            register: updates
-
-          ###########################################################################
-          ## Display the patches available
-          ###########################################################################
-
-          - name: Display patches available to be installed
-            debug:
-              msg: "Found {{ updates.stdout_lines | length }} packages to be updated: {{ updates.stdout | replace('\n', '   ')  }}"
-
-          ###########################################################################
-          ## Installing all patches
-          ###########################################################################
-
-          - name: Updating all packages  
-            yum:
-                name: '*'
-                state: latest
-                exclude: kernel*,glibc*
-            tags:
-                - skip_ansible_lint
-
+  
           ###########################################################################
           ## post_update script
           ###########################################################################
