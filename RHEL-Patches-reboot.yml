@@ -45,7 +45,7 @@
             register: pre_update_file
 
           - name: Running pre update script
-            command: sh '{{ pre_update_script }}'
+            command: /bin/bash '{{ pre_update_script }}'
             when: pre_update_file.stat.exists == true
             ignore_errors: no
             
@@ -97,7 +97,7 @@
             register: post_update_file 
 
           - name: Running post update script
-            command: sh '{{ post_update_script }}'
+            command: /bin/bash '{{ post_update_script }}'
             when: post_update_file.stat.exists == true
             ignore_errors: no
 
