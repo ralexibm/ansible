@@ -22,7 +22,7 @@
   any_errors_fatal: false
 
   vars:
-        pre_update_script: /var/log/checklist/RHEL_pre_update_without_reboot.sh
+        pre_update_script: /var/log/checklist/RHEL_pre_update_no_reboot.sh
         post_update_script: /var/log/checklist/RHEL_post_update.sh
 
   pre_tasks:
@@ -38,7 +38,7 @@
               mode: '0775'
 
           - name: Copying pre-update script to server
-            copy: src=RHEL_pre_update_without_reboot.sh dest=/var/log/checklist/RHEL_pre_update.sh owner=root group=root mode=775
+            copy: src=RHEL_pre_update_no_reboot.sh dest=/var/log/checklist/RHEL_pre_update_no_reboot.sh owner=root group=root mode=775
 
           - name: Checking if pre update script exist
             stat:
@@ -50,7 +50,6 @@
             when: pre_update_file.stat.exists == true
             ignore_errors: no
             
-  
           ###########################################################################
           ## post_update script
           ###########################################################################
@@ -72,7 +71,7 @@
 
           - name: Delete pre-update script
             file:
-              path: /var/log/checklist/RHEL_pre_update.sh
+              path: /var/log/checklist/RHEL_pre_update_no_reboot.sh
               state: absent
         
           - name: Delete post-update script
