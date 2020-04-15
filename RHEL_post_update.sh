@@ -3,7 +3,7 @@
 ## Variables
 
 PATH_DIR=/var/log/checklist
-BACKUP_DIR=POST-UPDATE-$(date +'%d-%m-%Y-%H-%M')
+BACKUP_DIR=POST-UPDATE-$(date +'%Y-%m-%d_%H-%M')
 
 DIR_LOGFILES=$PATH_DIR/$BACKUP_DIR
 
