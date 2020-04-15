@@ -43,3 +43,73 @@
             stat:
               path: '{{ pre_update_script }}'
             register: pre_update_file
+
+          - name: Running pre update script
+            command: sh '{{ pre_update_script }}'
+            when: pre_update_file.stat.exists == true
+            ignore_errors: no
+            
+  tasks:
+
+          ###########################################################################
+          ## Check if the server has updates available to be installed
+          ###########################################################################
+          
+          - name: Checking patches available for updates
+            shell: yum list updates | awk 'f;/Updated Packages/{f=1;}' | awk '{ print $1 }' | grep -v kernel | grep -v glibc
+            changed_when: updates.stdout_lines | length > 0
+            args:
+              warn: false
+            register: updates
+
+          ###########################################################################
+          ## Display the patches available
+          ###########################################################################
+
+          - name: Display patches available to be installed
+            debug:
+              msg: "Found {{ updates.stdout_lines | length }} packages to be updated: {{ updates.stdout | replace('\n', '   ')  }}"
+
+          ###########################################################################
+          ## Installing all patches
+          ###########################################################################
+
+          - name: Updating all packages  
+            yum:
+                name: '*'
+                state: latest
+                exclude: kernel*,glibc*
+            tags:
+                - skip_ansible_lint
+
+          ###########################################################################
+          ## post_update script
+          ###########################################################################
+         
+  post_tasks:
+
+          - name: Copying post-update script to server
+            copy: src=RHEL_post_update.sh dest=/var/log/checklist/RHEL_post_update.sh owner=root group=root mode=775
+
+          - name: Checking if post update script exist
+            stat:
+              path: '{{ post_update_script }}'
+            register: post_update_file 
+
+          - name: Running post update script
+            command: sh '{{ post_update_script }}'
+            when: post_update_file.stat.exists == true
+            ignore_errors: no
+
+          - name: Delete pre-update script
+            file:
+              path: /var/log/checklist/RHEL_pre_update.sh
+              state: absent
+        
+          - name: Delete post-update script
+            file: 
+              path: /var/log/checklist/RHEL_post_update.sh
+              state: absent
+
+          - debug:
+              msg: Security patch update completed.
